@@ -1,10 +1,12 @@
-# BitBucket Git Deploy Script For Simple Websites #
+# BitBucket Git Deploy Script #
 
-All the existing PHP Git deploy scripts seem to rely on the repository copy on the web server, and the web site files themselves, all being writable by the web server user (e.g. apache or www-data). From a security point of view this is far from ideal.
+For use with Bitbucket Hooks - to deploy from a Bitbucket Git repository to a remote web server.
+
+All the existing PHP Git deploy scripts (for remote repositories such as Bitbucket) seem to rely on the repository copy and the web site files on the web server all being writable by the web server user (e.g. apache or www-data). From a security point of view this is far from ideal.
 
 This script does pretty much the same as the others, except it can also be called via cron as well as the web server via an HTTP POST request. The HTTP request just sets up a flag in the form of an empty file. The script is also cron'd regularly and runs the git checkout if it finds the file set by the HTTP request. Simples.
 
-This is an alternative deployment script to that provided by Jonathan Nicol. You will need to follow his procedures as described [here](http://jonathannicol.com/blog/2013/11/19/automated-git-deployments-from-bitbucket/). Credit to him for his clear and detailed instructions.
+This is an alternative deployment script to that provided by Jonathan Nicol. You will need to follow his procedures as [described here](http://jonathannicol.com/blog/2013/11/19/automated-git-deployments-from-bitbucket/). Credit to him for his clear and detailed instructions.
 
 ## Installation ##
 
@@ -21,15 +23,26 @@ chown apache data
 
 ### Edit the paths ###
 
-At the top of the script, there are the root_path and repo_path parameters. Set these to whatever locations you used when setting things up with Jonathan's instructions.
+Copy config-sample.php to config.php and edit the root_path and repo_path parameters. Set these to whatever locations you used when setting things up with Jonathan's instructions.
 
 ### Symlink to web space ###
 
-Symlink it in to web space and create your URL for a BitBucket Hook POST Request. Hits to this URL from BitBucket will cause an empty file to be written. As Jonathan suggests choose a cryptic name for the symlink to help via security through obscurity etc. You could also restrict access to this script via an .htaccess or whatever.
+Symlink **bitbucket-cron-deploy.php** into web space and create your URL for a BitBucket Hook POST Request. Hits to this URL from BitBucket will cause an empty file to be written. As Jonathan suggests choose a cryptic name for the symlink to help via security through obscurity etc. You could also restrict access to this script via an .htaccess or whatever.
 
 ### Set up the cron job ###
 
-Then, cron the script to run every minute or so. When run from cron, it looks for the empty file created by the HTTP request. If it finds it, it does the Git checkout under the permissions of the system user account and NOT the web server user. Once this is done it deletes the data file.
+Then, cron **bitbucket-cron-deploy.php** to run every minute or so. When run from cron, it looks for the empty file created by the HTTP request. If it finds it, it does the Git checkout under the permissions of the system user account and NOT the web server user. Once this is done it deletes the data file.
+
+Edit your cron file
+
+```
+crontab -e
+```
+
+Add a line to run the script
+```
+* * * * * php -f /path/to/your/bitbucket-cron-deploy.php
+```
 
 ## Notes ##
 

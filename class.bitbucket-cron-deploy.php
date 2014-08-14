@@ -226,8 +226,14 @@ class cronDeploy
 		if (!file_exists(__DIR__.$this->dataFile)) exit;
 		
 		// Now assuming we have found the file, perform the Git checkout
-		exec("cd {$this->repo_dir} && {$this->git_path} fetch");
-		exec("cd {$this->repo_dir} && GIT_WORK_TREE={$this->root_dir} {$this->git_path} checkout -f");
+		exec("cd {$this->repo_dir} && {$this->git_path} fetch 2>&1", $op1);
+		exec("cd {$this->repo_dir} && GIT_WORK_TREE={$this->root_dir} {$this->git_path} checkout -f 2>&1", $op2);
+		
+		echo "\nDeployment report\n\n";
+		
+		print_r($op1);
+		echo "\n\n";
+		print_r($op2);
 		
 		$this->removeDataFile();
 	}
