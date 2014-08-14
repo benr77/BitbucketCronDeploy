@@ -21,14 +21,15 @@
 
 // Include the class
 include 'class.bitbucket-cron-deploy.php';
+include 'config.php';
 
 // Instantiate a new instance
 $myDeploy = new cronDeploy();
 
 // Set config vars
-$myDeploy->setRepoPath('/path/to/git/myproject.git'); // Where you have put your DETACHED HEAD repository
-$myDeploy->setRootPath('/path/to/sites/myproject.com'); // Where you want to deploy the files to
-$myDeploy->setGitBranch('production'); // The name of the branch to deploy.
+$myDeploy->setRepoPath($repo_path); 
+$myDeploy->setRootPath($root_path); 
+$myDeploy->setGitBranch($git_branch); 
 
 // Run the deployment
 $myDeploy->deploy();
